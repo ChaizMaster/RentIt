@@ -1,9 +1,12 @@
 const {Rental, validateRental} = require('../models/rental'); 
 const {Movie} = require('../models/movie'); 
 const {Customer} = require('../models/customer'); 
+const Fawn=require('fawn');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
+
+Fawn.init(mongoose);
 
 //route handler to fetch all rentals issued by our application
 router.get('/', async (req, res) => {
@@ -51,13 +54,18 @@ router.post('/', async (req, res) => {
       dailyRentalRate: movie.dailyRentalRate
     }
   });
-  //issue a rental
-  rental = await rental.save();
-  //decrease movie in stock
-  movie.numberInStock--;
-  movie.save();
-  //return rental info to customer
+  // creating an atomic task 
+  try{
+    new Fawn.Task()
+      .save('rentals',rental)
+      .update('movies',{_id:movie._id},{
+        $inc:{numberInStock:-1}
+      })
+      .run();
   res.send(rental);
+  }catch(error){
+    res.status(500).send('Something Failed...')
+  }
 });
 
 
