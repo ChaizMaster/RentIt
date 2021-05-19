@@ -24,6 +24,9 @@ app.use('/api/genres',require('./routes/genres'));
 //redirect all traffic for customers to a customer route handler
 app.use('/api/customers',require('./routes/customers'));
 
+//redirect all traffic for movies to a movie route handler
+app.use('/api/movies',require('./routes/movies'));
+
 // check for env PORT value else use 3000
 const port=process.env.PORT||3000;
 // setup endpoint on which server listens for http requests
