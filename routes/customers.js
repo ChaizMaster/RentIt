@@ -1,31 +1,8 @@
 const mongoose=require('mongoose');
-const Joi=require('joi');
+const {Customer,validateCustomer}=require('../models/customer');
 const express=require('express');
 const router=express.Router();
 
-
-// define structure of a document which will be stored inside Customer collection inside mongoDB
-const customerSchema=new mongoose.Schema({
-    name:{
-      type:String,
-      required:true,
-      minlength:5,
-      maxlength:50
-    },
-    isGold:{
-        type:Boolean,
-        default:false
-    },
-    phone:{
-        type:String,
-        required:true,
-        minlength:10,
-        maxlength:12
-    }
-});
-
-// define collection that will store documents structured adhering to their definition in customerSchema 
-const Customer=mongoose.model('Customer',customerSchema);
 
 //route handler to fetch all customers available in our application
 router.get('/', async (req, res) => {
@@ -81,17 +58,6 @@ router.delete('/:id',async (req, res) => {
   //if deletion is successful then return the customer which was just deleted to the client
     res.send(customer);
   });
-//function to validate that input recieved from client is in the form we require  
-function validateCustomer(genre) {
-    const schema = {
-      name: Joi.string().min(5).max(50).required(),
-      phone: Joi.string().min(10).max(12).required(),
-      isGold:Joi.boolean()
-    };
   
-    return Joi.validate(genre, schema);
-  }
-  
-
 
   module.exports=router;
