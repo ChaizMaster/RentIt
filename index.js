@@ -1,9 +1,19 @@
 const mongoose=require('mongoose');
+const config=require('config');
 const Joi=require('joi');
 Joi.objectId=require('joi-objectid')(Joi);
 const helmet=require('helmet');
 const express=require('express');
 const app=express();
+
+
+// before the app starts up we want to be sure that the privatekey for jwt is present as an environmental variable
+// otherwise our authentication endpoint will fail
+
+if(!config.get('jwtPrivateKey')){
+    console.error('FATAL ERROR: jwtPrivateKey is not defined!');
+    process.exit(1);
+}
 
 // connect to mongoDB via mongoose
 mongoose.connect('mongodb://localhost/rentit',{useNewUrlParser:true,useUnifiedTopology:true})
@@ -30,6 +40,12 @@ app.use('/api/movies',require('./routes/movies'));
 
 //redirect all traffic for rentals to a rental route handler
 app.use('/api/rentals',require('./routes/rentals'));
+
+//redirect all traffic for users to a user route handler
+app.use('/api/users',require('./routes/users'));
+
+//redirect all traffic for authentication to a auth route handler
+app.use('/api/auth',require('./routes/auth'));
 
 // check for env PORT value else use 3000
 const port=process.env.PORT||3000;
