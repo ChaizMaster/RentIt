@@ -1,5 +1,5 @@
 const {Genre,validateGenre}=require('../models/genre');
-const mongoose=require('mongoose');
+const auth=require('../middleware/auth');
 const express=require('express');
 const router=express.Router();
 
@@ -21,7 +21,7 @@ router.get('/:id',async (req, res) => {
 });
 
 //route handler to add genre to the app 
-  router.post('/', async (req, res) => {
+  router.post('/', auth ,async (req, res) => {
     const { error } = validateGenre(req.body); 
     if (error) return res.status(400).send(error.details[0].message);
     let genre = new Genre({name: req.body.name});
@@ -29,7 +29,7 @@ router.get('/:id',async (req, res) => {
     res.send(genre);
   });
 // route handler to update genre in the app
-  router.put('/:id', async (req, res) => {
+  router.put('/:id', auth,async (req, res) => {
     //validate whether data sent by client is valid
     const { error } = validateGenre(req.body); 
     if (error) return res.status(400).send(error.details[0].message);
@@ -41,7 +41,7 @@ router.get('/:id',async (req, res) => {
     res.send(genre);
   });
 // route handler to delete a genre from app 
-  router.delete('/:id',async (req, res) => {
+  router.delete('/:id',auth,async (req, res) => {
     //try removing genre using it's id from DB
     const genre=await Genre.findByIdAndRemove(req.params.id);
     //if genre is not present then raise a 404 error

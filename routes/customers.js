@@ -1,4 +1,4 @@
-const mongoose=require('mongoose');
+const auth=require('../middleware/auth');
 const {Customer,validateCustomer}=require('../models/customer');
 const express=require('express');
 const router=express.Router();
@@ -21,7 +21,7 @@ router.get('/:id',async (req, res) => {
   });
 
 //route handler to add customer to the app 
-router.post('/', async (req, res) => {
+router.post('/',auth, async (req, res) => {
     const { error } = validateCustomer(req.body); 
     if (error) return res.status(400).send(error.details[0].message);
     let customer = new Customer({
@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
   });
 
 // route handler to update customer in the app
-router.put('/:id', async (req, res) => {
+router.put('/:id',auth ,async (req, res) => {
     //validate whether data sent by client is valid
     const { error } = validateCustomer(req.body); 
     if (error) return res.status(400).send(error.details[0].message);
@@ -50,7 +50,7 @@ router.put('/:id', async (req, res) => {
   });
 
 // route handler to delete a customer from app 
-router.delete('/:id',async (req, res) => {
+router.delete('/:id',auth,async (req, res) => {
     //try removing customer using it's id from DB
     const customer=await Customer.findByIdAndRemove(req.params.id);
     //if customer is not present then raise a 404 error

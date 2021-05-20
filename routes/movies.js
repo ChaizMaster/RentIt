@@ -1,6 +1,6 @@
 const {Movie, validateMovie} = require('../models/movie'); 
 const {Genre} = require('../models/genre');
-const mongoose = require('mongoose');
+const auth=require('../middleware/auth');
 const express = require('express');
 const router = express.Router();
 
@@ -19,7 +19,7 @@ router.get('/:id', async (req, res) => {
     res.send(movie);
   });
 //route handler to add movie to the app
-router.post('/', async (req, res) => {
+router.post('/',auth ,async (req, res) => {
   const { error } = validateMovie(req.body); 
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
 });
 
 // route handler to update movie in the app
-router.put('/:id', async (req, res) => {
+router.put('/:id',auth,async (req, res) => {
 //validate whether data sent by client is valid
   const { error } = validateMovie(req.body); 
   if (error) return res.status(400).send(error.details[0].message);
@@ -67,7 +67,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // route handler to delete a movie from app 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',auth, async (req, res) => {
   //try removing movie using it's id from DB
   const movie = await Movie.findByIdAndRemove(req.params.id);
   //if movie is not present then raise a 404 error
