@@ -1,4 +1,5 @@
 const Joi = require('joi');
+
 const mongoose = require('mongoose');
 
 // define structure of a document which will be stored inside Rental collection inside mongoDB
@@ -63,8 +64,8 @@ const Rental = mongoose.model('Rental',rentalSchema );
 //function to validate that input recieved from client is in the form we require
 function validateRental(rental) {
   const schema = {
-    customerId: Joi.string().required(),
-    movieId: Joi.string().required()
+    customerId: Joi.objectId().required(),
+    movieId: Joi.objectId().required()
   };
 
   return Joi.validate(rental, schema);
