@@ -23,15 +23,18 @@ const userSchema=new mongoose.Schema({
         required:true,
         minlength:8,
         maxlength:1024 // because we will hash password's so need higher values
-    }
+    },
+    isAdmin:Boolean
 
 })
 
 // we will add authentication and generate jwt functionality to userSchema so that it can be reusable
 userSchema.methods.generateAuthToken=function(){
     // generate jsonwebtoken to send to client, we store the private key in env var and set var in config of the app
-    // we use this so that it can fetch id of the object which in whose context the function is being called 
-    const token=jwt.sign({_id:this._id},config.get('jwtPrivateKey'));
+    // we use this so that it can fetch id of the object which in whose context the function is being called
+    // we add another property isAdmin to payload so that we can internally check whether the user is authorized to perform
+    // deletion operations on the server as only user's with admin role are allowed to delete information. 
+    const token=jwt.sign({_id:this._id,isAdmin:this.isAdmin},config.get('jwtPrivateKey'));
     return token;
 }
 

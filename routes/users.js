@@ -1,9 +1,19 @@
 const {User,validateUser}=require('../models/user');
+const auth=require('../middleware/auth');
 const _ =require('lodash');
 const bcrypt=require('bcrypt');
 const express=require('express');
 const router=express.Router();
 
+//route handler for users to look at their profile
+//Note: we use me instead of id, to prevent a user to send another user's id and lookup sensitive info about that user
+//using me we will extract user id using jwt and by verifying the signature
+router.get('/me',auth,async (req,res)=>{
+   //find user by fetching user id from jwt
+    const user=await User.findById(req.user._id).select('-password');
+    //send user info to the client
+    res.send(user);
+});
 
 //route handler to create new user in our app
   router.post('/',async (req, res) => {
