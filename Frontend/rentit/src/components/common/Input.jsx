@@ -1,19 +1,11 @@
 import React from "react";
 
-export default function Input(props) {
+export default function Input({ name, label, error, ...rest }) {
   return (
     <div className="form-group">
-      <label htmlFor={props.name}>{props.label}</label>
-      <input
-        autoFocus
-        name={props.name}
-        value={props.value}
-        onChange={props.onChange}
-        ref={this.username}
-        id={props.name}
-        type="text"
-        className="form-control"
-      />
+      <label htmlFor={name}>{label}</label>
+      <input {...rest} name={name} id={name} className="form-control" />
+      {error && <div className="alert alert-danger">{error}</div>}
     </div>
   );
 }
