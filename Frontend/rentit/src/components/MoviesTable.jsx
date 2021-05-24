@@ -1,6 +1,6 @@
 import Like from "./common/Like";
 import React, { Component } from "react";
-import Link from "react-router-dom";
+import { Link } from "react-router-dom";
 import Table from "./common/Table";
 export default class MoviesTable extends Component {
   columns = [
